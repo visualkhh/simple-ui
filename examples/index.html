@@ -4,8 +4,32 @@
     <meta charset="UTF-8">
     <title>simple-ui-web</title>
     <script src="../dist/dist/bundle.js"></script>
+    <script>
+        const app = new SimpleUI(window);
+        // app.run();
+        const aaat = app.setComponent(ScheduleComponent);
+        console.log('----@@--?', aaat)
+        aaat.run();
+    </script>
+    <style>
+        .container {
+            background-color: aquamarine;
+        }
+        .schedule {
+            background-color: pink;
+        }
+    </style>
 </head>
 <body>
 examples
+<div class="container">
+    <div class="schedule">aa</div>
+<su-schedule class="schedule">aa
+    asd
+    asd
+    das
+<!--    <div slot="header">header</div>bb-->
+</su-schedule>
+</div>
 </body>
 </html>
