@@ -17,19 +17,62 @@
         }
         .schedule {
             background-color: pink;
+            /*display: inline-block;*/
+            /*font-size: 99px;*/
+            /*display: inline;*/
+            display: block;
         }
     </style>
 </head>
 <body>
 examples
-<div class="container">
+<form id="form" class="container">
     <div class="schedule">aa</div>
-<su-schedule class="schedule">aa
-    asd
-    asd
-    das
-<!--    <div slot="header">header</div>bb-->
+<su-schedule class="schedule">
+<!--    <div slot="header">header1</div>-->
+<!--    <div slot="header">header2</div>-->
+    <div>xxxxxx</div>
+<!--    <div slot="header">header3-->
+    <div slot="header-1">header32
+    <input type="checkbox" name="ss" value="ss-value" />
+    </div>
+
 </su-schedule>
+    <button>aaaaaaaaa</button>
+</form>
+<!--<div is="su-schedule" class="schedule">22</div>-->
+
+<div>
+    <select>
+        <optgroup label="group1">
+            <option>1</option>
+            <option>2</option>
+        </optgroup>
+    </select>
+    <label> aaaaaaddddddd
+    <input type="checkbox" name="ddd"/>
+    </label>
 </div>
+<ol>
+    <li>aa</li>
+    <li>aa</li>
+    <li>aa</li>
+    <li>aa</li>
+    <li>aa</li>
+</ol>
+<select>
+    <option value="asd">1</option>
+    <option>2</option>
+    <option>3</option>
+</select>
+<input type="number" min="2" max="" />
+
+<script>
+    document.querySelector('#form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dd = new FormData(e.currentTarget)
+        console.log('click', Array.from(dd.entries()))
+    })
+</script>
 </body>
 </html>
