@@ -16,11 +16,15 @@ export class Schedule  extends SuHTMLElement<any>{
     const style = document.createElement('style');
     // style.innerText = `div{color:red}; display: block;`
     this.shadowRoots.appendChild(style);
-    this.shadowRoots.innerHTML = `<div class="schedule"><div>vvvvvvvv</div> [<slot name="header"></slot>] [<slot name="header-1"></slot>]</div>`;
-    this.shadowRoots.querySelector('slot[name="header-1"]')?.addEventListener('slotchange', (e) => {
+    this.shadowRoots.innerHTML = `<div class="schedule"><div>vvvvvvvv</div>(<slot></slot>) [<slot name="header"></slot>] [<slot name="header-1"></slot>]</div>`;
+    this.shadowRoots.querySelector('slot')?.addEventListener('slotchange', (e) => {
       // console.log('slotchange1', e.target, e.currentTarget);
-      console.log('slotchange1', this.innerHTML );
+      console.log('slotchange0', this.innerHTML );
     });
+    // this.shadowRoots.querySelector('slot[name="header-1"]')?.addEventListener('slotchange', (e) => {
+    //   // console.log('slotchange1', e.target, e.currentTarget);
+    //   console.log('slotchange1', this.innerHTML );
+    // });
     // this.shadowRoots.addEventListener('slotchange', (e) => {
     //   console.log('slotchange', e.target, e.composedPath());
       // const s = e.target as HTMLSlotElement
