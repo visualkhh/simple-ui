@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css"/>
+    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container{
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #calendar{
+            flex: 2;
+            width: 100%;
+            /*width: 90%;*/
+            /*height: 90%;*/
+        }
+        #list-container{
+            flex: 1;
+            padding: 10px;
+            width: 100%;
+            overflow: scroll;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /*width: 100%;*/
+            /*height: 100%;*/
+            /*display: flex;*/
+            /*flex-direction: column;*/
+            /*align-items: center;*/
+        }
+        .list-item-container {
+            cursor: pointer;
+            display: flex;
+            padding: 10px;
+            margin: 0px 10px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #f5f5f5;
+            /*box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);*/
+            gap: 7px;
+            /*white-space: nowrap;*/
+            color: #3d3c3c;
+            font-size: 13px;
+        }
+        .list-item-container > div {
+          border-right: 1px solid #e0e0e0;
+        }
+        .list-item-container > div:last-child {
+          border-right: none;
+        }
+        .list-item-container.checked {
+            background-color: #d5edfa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="calendar"></div>
+        <div id="list-container">
+        </div>
+    </div>
+    <script>
+        const Calendar = tui.Calendar;
+
+        const container = document.getElementById('calendar');
+        const options = {
+            defaultView: 'week',
+            usageStatistics: false,
+            isReadOnly: true,
+            useFormPopup: true,
+            useDetailPopup: true,
+            week: {
+                showNowIndicator: false,
+                dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+                // dayDateFormatter: function(date) {
+                //   return date.getDate();
+                // },
+                hourStart: 6,
+                hourEnd: 18,
+                eventView: ['time'],
+                taskView: false,
+                startDayOfWeek: 1,
+            },
+
+            // milestoneView: false,  // Disable milestone view
+            // scheduleView: ['time'] // e.g. true, false, or ['allday', 'time']
+            // week: {
+            //   startDayOfWeek: 0,
+            //   workweek: true,
+            // },
+            // timezone: {
+            //   zones: [
+            //     {
+            //       timezoneName: 'Asia/Seoul',
+            //       displayLabel: 'Seoul',
+            //     },
+            //     {
+            //       timezoneName: 'Europe/London',
+            //       displayLabel: 'London',
+            //     },
+            //   ],
+            // },
+            // calendars: [
+            //   {
+            //     id: 'cal1',
+            //     name: '개인',
+            //     backgroundColor: '#03bd9e',
+            //   },
+            //   {
+            //     id: 'cal2',
+            //     name: '직장',
+            //     backgroundColor: '#00a9ff',
+            //   },
+            // ],
+        };
+
+        const calendar = new Calendar(container, options);
+        calendar.setTheme({
+            week: {
+                timeGridLeft: {
+                    borderRight: 'none',
+                    backgroundColor: '#f5f5f5',
+                    width: '24px',
+                },
+            },
+        });
+        calendar.setOptions({
+            template: {
+                time(event) {
+                    return `<span style="white-space: break-spaces">${event.title}</span>`;
+                },
+                weekDayName(model) {
+                    return `<span>${model.dayName}</span>`;
+                    // return `<span>${model.date}</span>&nbsp;&nbsp;<span>${model.dayName}</span>`;
+                },
+                // timegridNowIndicatorLabel({ time }) {
+                //   return `current time: ${time}`;
+                // },
+                timegridDisplayPrimaryTime(model) {
+                    var hour = model.time.getHours();
+                    var formattedHour = hour < 10 ? '0' + hour : hour;
+                    return `${formattedHour}`;
+                },
+                // timegridDisplayTime({ time }) {
+                //   return `sub timezone: ${time}`;
+                // },
+            },
+        });
+
+        calendar.createEvents([
+            {
+                id: '1',
+                // calendarId: 'cal1',
+                title: 'timed event1',
+                body: 'TOAST UI Calendar',
+                start: '2024-02-25T10:00:00',
+                end: '2024-02-25T11:00:00',
+                location: 'Meeting Room A',
+                attendees: ['A', 'B', 'C'],
+                category: 'time',
+                state: 'Free',
+                isReadOnly: true,
+                color: '#fff',
+                backgroundColor: '#c00',
+                customStyle: {
+                    fontStyle: 'italic',
+                    fontSize: '15px',
+                },
+            },
+            {
+                id: '2',
+                // calendarId: 'cal1',
+                title: 'timed event',
+                body: 'TOAST UI Calendar',
+                start: '2024-02-25T10:30:00',
+                end: '2024-02-25T12:00:00',
+                location: 'Meeting Room A',
+                attendees: ['A', 'B', 'C'],
+                category: 'time',
+                state: 'Free',
+                isReadOnly: true,
+                color: '#fff',
+                backgroundColor: '#c00',
+                customStyle: {
+                    fontStyle: 'italic',
+                    fontSize: '15px',
+                },
+            },
+        ]);
+
+        const timedEvent = calendar.getEvent('1', 'cal1'); // EventObject
+        calendar.on('clickEvent', ({event}) => {
+            console.log(event); // EventObject
+        });
+        // calendar.setMilestoneVisibility(false);
+        // calendar.setOptions({
+        //   template: {
+        //     milestone(event) {
+        //       return `<span style:"color: blue;">${event.title}</span>`;
+        //     },
+        //   },
+        // });
+        // calendar.setTheme({
+        //   week: {
+        //     dayGrid: {
+        //       borderRight: 'none',
+        //       backgroundColor: 'rgba(81, 92, 230, 0.05)',
+        //     },
+        //     dayGridLeft: {
+        //       borderRight: 'none',
+        //       backgroundColor: 'rgba(81, 92, 230, 0.05)',
+        //       width: '144px',
+        //     },
+        //   },
+        // });
+    </script>
+    <script>
+        const randomRgbHex = () => {
+            const rgb = Math.floor(Math.random() * 0xFFFFFF);
+            const hex = rgb.toString(16);
+            return `#${hex}`;
+        };
+        const selectedIndex = new Set();
+        const list = [
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 공통 수학1 기본, 여름 : 공통 수학1 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 공통 수학1 기본, 여름 : 공통 수학1 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi S1', location: '대치 파인만 학원', content: '봄 : 중 3-1 심화 + 중 3-2 기본심화, 여름 : 공통 수학1 기본', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi S1', location: '대치 파인만 학원', content: '봄 : 중 3-1 심화 + 중 3-2 기본심화, 여름 : 공통 수학1 기본', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi S2', location: '대치 파인만 학원', content: '봄 : 중 3-1 심화 + 중 3-2 기본심화, 여름 : 공통 수학1 기본', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi S2', location: '대치 파인만 학원', content: '봄 : 중 3-1 심화 + 중 3-2 기본심화, 여름 : 공통 수학1 기본', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A4', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A4', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 중 2-2 심화 + 중 3-1 기본응용, 여름 : 중 3-1 심화, 중 3-2 기본 심화', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M4', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M4', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M2', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M2', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M5', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-4', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY M5', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 심화', id: '1-4', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S1', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S1', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S2', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S2', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S4', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S4', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-3', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S5', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-4', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY S5', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-4', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY A1', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY A1', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-1', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY A2/5', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'SKY A2/5', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-2', target: '[6]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi SCL2', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 응용', id: '1-1', target: '[5]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi SCL2', location: '대치 파인만 학원', content: '봄 : 중 2-1 심화 + 중 2-2 기본응용, 여름 : 중 2-2 심화, 중 3-1 기본 응용', id: '1-1', target: '[5]', start: '19:00', end: '180', color: ''},
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M2', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M2', location: '대치 파인만 학원', content: '봄 : 중 1-2 심화 + 중 2-1 기본응용, 여름 : 중 2-1 심화, 중 2-2 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S1', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S1', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S2', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S2', location: '대치 파인만 학원', content: '봄 : 중 1-1 심층 + 중 1-2 기본응용, 여름 : 중 1-2 심화, 중 2-1 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 중 1-1 기본 응용 + 중 1-1 심화, 여름 : 중 1-1 심층, 중 1-2 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 중 1-1 기본 응용 + 중 1-1 심화, 여름 : 중 1-1 심층, 중 1-2 기본 응용', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 중 1-1 기본 응용 + 중 1-1 심화, 여름 : 중 1-1 심층, 중 1-2 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 중 1-1 기본 응용 + 중 1-1 심화, 여름 : 중 1-1 심층, 중 1-2 기본 응용', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M4', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M4', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M2', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-3', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M2', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-3', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M5', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-4', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M5', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-4', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M8', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-5', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M8', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-5', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S1', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S1', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S4', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S4', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S2', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-3', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S2', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-3', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S5', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-4', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY S5', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-4', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY A1', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY A1', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-1', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY A2', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY A2', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-2', target: '[5]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi SCL1', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi SCL1', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi SCL2', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi SCL2', location: '대치 파인만 학원', content: '봄 : 6-2 기본 응용 + 6-2 심화, 여름 : 중 1-1 기본 응용, 중 1-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M1', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M2', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi M2', location: '대치 파인만 학원', content: '봄 : 6-1 기본 응용 + 6-1 심화, 여름 : 6-2 기본 응용, 6-2 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S4', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S4', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S5', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi S5', location: '대치 파인만 학원', content: '봄 : 5-2 기본 응용 + 5-2 심화, 여름 : 6-1 기본 응용, 6-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 5-1 기본 응용 + 5-1 심화, 여름 : 5-2 기본 응용, 5-2 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A1', location: '대치 파인만 학원', content: '봄 : 5-1 기본 응용 + 5-1 심화, 여름 : 5-2 기본 응용, 5-2 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 5-1 기본 응용 + 5-1 심화, 여름 : 5-2 기본 응용, 5-2 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'Pre Medi A2', location: '대치 파인만 학원', content: '봄 : 5-1 기본 응용 + 5-1 심화, 여름 : 5-2 기본 응용, 5-2 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-1', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-2', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-3', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: 'SKY M1', location: '대치 파인만 학원', content: '봄 : 4-2 기본 응용 + 4-2 심화, 여름 : 5-1 기본 응용, 5-1 심화', id: '1-3', target: '[4]', start: '15:40', end: '180', color: ''},
+            {className: '창의 사고력 수학 기본', location: '대치 파인만 학원', content: '창의 사고력 수학 기본 과정', id: '1-1', target: '[4]', start: '15:00', end: '120', color: ''},
+            {className: '창의 사고력 수학 응용', location: '대치 파인만 학원', content: '창의 사고력 수학 응용 과정', id: '1-1', target: '[5]', start: '15:00', end: '120', color: ''},
+            {className: '창의 사고력 수학 심화', location: '대치 파인만 학원', content: '창의 사고력 수학 심화 과정', id: '1-1', target: '[6]', start: '13:00', end: '180', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-4', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-4', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-5', target: '[3, 4]', start: '19:20', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-5', target: '[3, 4]', start: '19:20', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-6', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-6', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-7', target: '[3, 4]', start: '19:20', end: '110', color: ''},
+            {className: '초등 일품', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-7', target: '[3, 4]', start: '19:20', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-4', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-4', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-5', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-5', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-6', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 실력', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-6', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-2', target: '[3, 4]', start: '17:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 심화', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-3', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 경시', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '초등 경시', location: '대치 생각하는 황소', content: '초등 4~6 과정', id: '2-1', target: '[3, 4]', start: '15:15', end: '110', color: ''},
+            {className: '2P1', location: '대치 개념폴리아', content: '5-1 심화 ', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P2', location: '대치 개념폴리아', content: '4-2 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P3', location: '대치 개념폴리아', content: '4-1 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P4', location: '대치 개념폴리아', content: '3-2 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P5', location: '대치 개념폴리아', content: '3-1 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P6', location: '대치 개념폴리아', content: '2-2 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '2P7', location: '대치 개념폴리아', content: '2-1 심화', id: '3-1', target: '[2]', start: '15:10', end: '140', color: ''},
+            {className: '3P1', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P1', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PB', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PB', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P3', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P3', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PC', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PC', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P4', location: '대치 개념폴리아', content: '4-1 개념/4-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P4', location: '대치 개념폴리아', content: '4-1 개념/4-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PD', location: '대치 개념폴리아', content: '4-1 개념/4-1 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PD', location: '대치 개념폴리아', content: '4-1 개념/4-1 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P5', location: '대치 개념폴리아', content: '3-2 개념/3-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P5', location: '대치 개념폴리아', content: '3-2 개념/3-2 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PE', location: '대치 개념폴리아', content: '3-2 개념/3-2 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PE', location: '대치 개념폴리아', content: '3-2 개념/3-2 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P6', location: '대치 개념폴리아', content: '3-1 개념/3-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3P6', location: '대치 개념폴리아', content: '3-1 개념/3-1 심화', id: '3-1', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PG', location: '대치 개념폴리아', content: '3-1 개념/3-1 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '3PG', location: '대치 개념폴리아', content: '3-1 개념/3-1 심화', id: '3-2', target: '[3]', start: '15:10', end: '140', color: ''},
+            {className: '4특목1', location: '대치 개념폴리아', content: '중 1-2개념/중 1-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4특목1', location: '대치 개념폴리아', content: '중 1-2개념/중 1-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4특목B', location: '대치 개념폴리아', content: '중 1-1개념/6-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4특목B', location: '대치 개념폴리아', content: '중 1-1개념/6-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사1', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사1', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사A', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사A', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사2', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사2', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사B', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4자사B', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P1', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P1', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PA', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PA', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P2', location: '대치 개념폴리아', content: '5-1 개념/5-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P2', location: '대치 개념폴리아', content: '5-1 개념/5-1 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PB', location: '대치 개념폴리아', content: '5-1 개념/5-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PB', location: '대치 개념폴리아', content: '5-1 개념/5-1 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P3', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4P3', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-1', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PC', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '4PC', location: '대치 개념폴리아', content: '4-2 개념/4-2 심화', id: '3-2', target: '[4]', start: '15:20', end: '180', color: ''},
+            {className: '5특목1', location: '대치 개념폴리아', content: '중 3-1 개념/중 2-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목1', location: '대치 개념폴리아', content: '중 3-1 개념/중 2-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목B', location: '대치 개념폴리아', content: '중 2-2 개념/중 2-1 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목B', location: '대치 개념폴리아', content: '중 2-2 개념/중 2-1 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목3', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 심화', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목3', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 심화', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목C', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 심화', id: '3-2', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5특목C', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 심화', id: '3-2', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사A', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사A', location: '대치 개념폴리아', content: '중 2-1 개념/중 1-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사1', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사1', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-2 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사2', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 심화', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5자사2', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 심화', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5P1', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5P1', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 응용', id: '3-1', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5PB', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 응용', id: '3-2', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5PB', location: '대치 개념폴리아', content: '중 1-2 개념/중 1-1 응용', id: '3-2', target: '[5]', start: '15:20', end: '180', color: ''},
+            {className: '5P3', location: '대치 개념폴리아', content: '중 1-1개념/중 1-1 응용', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P3', location: '대치 개념폴리아', content: '중 1-1개념/중 1-1 응용', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P4', location: '대치 개념폴리아', content: '6-2 개념/6-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P4', location: '대치 개념폴리아', content: '6-2 개념/6-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PD', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PD', location: '대치 개념폴리아', content: '6-2 개념/6-1 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PE', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PE', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P5', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P5', location: '대치 개념폴리아', content: '6-1 개념/6-1 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PG-1', location: '대치 개념폴리아', content: '6-1 개념/5-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PG-1', location: '대치 개념폴리아', content: '6-1 개념/5-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P6-1', location: '대치 개념폴리아', content: '6-1 개념/5-2 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P6-1', location: '대치 개념폴리아', content: '6-1 개념/5-2 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PG-2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5PG-2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-1', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P6-2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '5P6-2', location: '대치 개념폴리아', content: '5-2 개념/5-2 심화', id: '3-2', target: '[5]', start: '16:40', end: '180', color: ''},
+            {className: '6영과A', location: '대치 개념폴리아', content: '대수 기본/경시 실전', id: '3-1', target: '[6]', start: '17:00', end: '270', color: ''},
+            {className: '6영과A', location: '대치 개념폴리아', content: '대수 기본/경시 실전', id: '3-1', target: '[6]', start: '17:00', end: '270', color: ''},
+            {className: '6영과A', location: '대치 개념폴리아', content: '대수 기본/경시 실전', id: '3-1', target: '[6]', start: '10:00', end: '180', color: ''},
+            {className: '6특목1', location: '대치 개념폴리아', content: '공통수학2개념/중 2-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목1', location: '대치 개념폴리아', content: '공통수학2개념/중 2-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목2', location: '대치 개념폴리아', content: '공통수학1개념/중 1-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목2', location: '대치 개념폴리아', content: '공통수학1개념/중 1-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목C', location: '대치 개념폴리아', content: '공통수학1개념/중 3-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목C', location: '대치 개념폴리아', content: '공통수학1개념/중 3-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '240', color: ''},
+            {className: '6특목4', location: '대치 개념폴리아', content: '중3-2 개념/중3-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6특목4', location: '대치 개념폴리아', content: '중3-2 개념/중3-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사1', location: '대치 개념폴리아', content: '중3-1 응용/중2-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사1', location: '대치 개념폴리아', content: '중3-1 응용/중2-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사B', location: '대치 개념폴리아', content: '중3-1 개념/중2-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사B', location: '대치 개념폴리아', content: '중3-1 개념/중2-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사3', location: '대치 개념폴리아', content: '중3-1 개념/중2-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사3', location: '대치 개념폴리아', content: '중3-1 개념/중2-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사B-1', location: '대치 개념폴리아', content: '중2-2 개념/중2-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6자사B-1', location: '대치 개념폴리아', content: '중2-2 개념/중2-1 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P1', location: '대치 개념폴리아', content: '중2-2 개념/중2-1 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P1', location: '대치 개념폴리아', content: '중2-2 개념/중2-1 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6PA', location: '대치 개념폴리아', content: '중2-1 응용/중1-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6PA', location: '대치 개념폴리아', content: '중2-1 응용/중1-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6PB', location: '대치 개념폴리아', content: '중2-1 개념/중1-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6PB', location: '대치 개념폴리아', content: '중2-1 개념/중1-2 심화', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P3', location: '대치 개념폴리아', content: '중2-1 개념/중1-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P3', location: '대치 개념폴리아', content: '중2-1 개념/중1-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P4', location: '대치 개념폴리아', content: '중1-2 개념/중1-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P4', location: '대치 개념폴리아', content: '중1-2 개념/중1-2 응용', id: '3-1', target: '[6]', start: '15:20', end: '180', color: ''},
+            {className: '6P5', location: '대치 개념폴리아', content: '중1-2 개념/중1-1 심화', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6P5', location: '대치 개념폴리아', content: '중1-2 개념/중1-1 심화', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PE', location: '대치 개념폴리아', content: '중1-2 개념/중1-1 심화', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PE', location: '대치 개념폴리아', content: '중1-2 개념/중1-1 심화', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PG', location: '대치 개념폴리아', content: '중1-1 개념/중1-1 응용', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PG', location: '대치 개념폴리아', content: '중1-1 개념/중1-1 응용', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6P7', location: '대치 개념폴리아', content: '중1-1 개념/중1-1 응용', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6P7', location: '대치 개념폴리아', content: '중1-1 개념/중1-1 응용', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PH', location: '대치 개념폴리아', content: '6-2개념/6-2심화', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6PH', location: '대치 개념폴리아', content: '6-2개념/6-2심화', id: '3-1', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6P8', location: '대치 개념폴리아', content: '6-2개념/6-2심화', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+            {className: '6P8', location: '대치 개념폴리아', content: '6-2개념/6-2심화', id: '3-2', target: '[6]', start: '18:40', end: '180', color: ''},
+        ]
+
+        const now = new Date();
+        list.forEach(it => {
+            // const a = it.start.split(':').map(it => parseInt(it));
+            // now.setHours(a[0] ?? 0, a[1] ?? 0);
+            // it.startTime = now.toISOString();
+            // now.setMinutes(now.getMinutes() + parseInt(it.end) ?? 0);
+            // it.endTime = now.toISOString();
+            it.target = JSON.parse(it.target).map(it => `${it} 학년`);
+            it.color = randomRgbHex();
+        });
+
+        const listContainer = document.querySelector('#list-container')
+        list.forEach((it, index) => {
+            const div = document.createElement('div');
+            div.classList.add('list-item-container');
+            div.innerHTML = `
+                    <div>${it.className}</div>
+                    <div>${it.location}</div>
+                    <div>${it.content}</div>
+                    <div><div>${it.start}</div><div style="white-space: nowrap">${it.end}분</div></div>
+            `;
+            div.addEventListener('click', () => {
+                if(selectedIndex.has(index)){
+                    selectedIndex.delete(index)
+                    div.classList.remove('checked');
+                } else {
+                    selectedIndex.add(index);
+                    div.classList.add('checked');
+                }
+            });
+            listContainer.appendChild(div);
+        });
+        console.log(list);
+    </script>
+</body>
+</html>
